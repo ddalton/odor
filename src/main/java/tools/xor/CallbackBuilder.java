@@ -12,15 +12,20 @@ public class CallbackBuilder extends Parser.RuleCallback {
 		
 		Stack<CallbackBuilder> builders = new Stack<CallbackBuilder>();
 
-		public void enter(CallbackBuilder builder, String name, String ruleName) {
-			System.out.println("Enter [" + ruleName + "] " + name);
+		public void enter(CallbackBuilder builder, String fragment, String ruleName) {
+			System.out.println("Enter [" + ruleName + "] " + fragment);
 			builders.push(builder);
 		}
 
-		public void leave(CallbackBuilder builder, String name, String ruleName) {
-			System.out.println("Leave [" + ruleName + "] " + name);
-			builders.pop();
+		public void leave(CallbackBuilder builder, String fragment, String ruleName) {
+			System.out.println("Leave [" + ruleName + "] " + fragment);
+			CallbackBuilder b = builders.pop();
+			b.process(fragment);
 		}
+	}
+	
+	protected void process(String fragment) {
+		
 	}
 	
     private static class InvalidRuleName extends IllegalArgumentException {
@@ -71,6 +76,10 @@ public class CallbackBuilder extends Parser.RuleCallback {
 	@Override
 	public int postBranch(int offset, int length) throws Exception {
 		System.out.println("postBranch");
+		if(length < 0) {
+			return super.postBranch(offset, length);
+		}
+		
 		((Tracker) callbackData.myData).leave(
 				this,
 				extract(callbackData.inputString, offset, length), 

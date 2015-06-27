@@ -162,13 +162,14 @@ public class TopTest {
     
     @Test
     public void testTopRelativeClassName() throws Exception {
-    	final String RELATIVE_TOP = "tools_xor_odor_Category(1)/Products?$top=201&$orderby=name";
+    	final String RELATIVE_TOP = "tools_xor_odor_Category(1)/Products?$top=201&$skip=10&$orderby=name";
     	
         Parser p = new Parser(ODataParser.getInstance());
         p.setStartRule(CallbackBuilder.ruleID(RELATIVE_URI));
         p.setInputString(RELATIVE_TOP);
         p.setMyData(new CallbackBuilder.Tracker());
         p.setRuleCallback(ODataParser.RuleNames.TOP.ruleID(), new TopCallbackBuilder(p, ODataParser.RuleNames.TOP));
+        p.setRuleCallback(ODataParser.RuleNames.SKIP.ruleID(), new SkipCallbackBuilder(p, ODataParser.RuleNames.SKIP));        
         p.setRuleCallback(ODataParser.RuleNames.ORDERBYITEM.ruleID(), new CallbackBuilder(p, ODataParser.RuleNames.ORDERBYITEM));
         p.setRuleCallback(ODataParser.RuleNames.ENTITYSETNAME.ruleID(), new CallbackBuilder(p, ODataParser.RuleNames.ENTITYSETNAME));
         p.setRuleCallback(ODataParser.RuleNames.KEYPROPERTYVALUE.ruleID(), new CallbackBuilder(p, ODataParser.RuleNames.KEYPROPERTYVALUE));
@@ -194,5 +195,77 @@ public class TopTest {
             System.out.flush();
         }
     }
+       
+    
+    @Test
+    public void testSkiptoken() throws Exception {
+    	final String RELATIVE_TOP = "tools_xor_odor_Category(1)/Products?$top=201&$skiptoken=13S35K&$orderby=name";
+    	
+        Parser p = new Parser(ODataParser.getInstance());
+        p.setStartRule(CallbackBuilder.ruleID(RELATIVE_URI));
+        p.setInputString(RELATIVE_TOP);
+        p.setMyData(new CallbackBuilder.Tracker());
+        p.setRuleCallback(ODataParser.RuleNames.TOP.ruleID(), new TopCallbackBuilder(p, ODataParser.RuleNames.TOP));
+        p.setRuleCallback(ODataParser.RuleNames.SKIPTOKEN.ruleID(), new SkiptokenCallbackBuilder(p, ODataParser.RuleNames.SKIPTOKEN));        
+        p.setRuleCallback(ODataParser.RuleNames.ORDERBYITEM.ruleID(), new CallbackBuilder(p, ODataParser.RuleNames.ORDERBYITEM));
+        p.setRuleCallback(ODataParser.RuleNames.ENTITYSETNAME.ruleID(), new CallbackBuilder(p, ODataParser.RuleNames.ENTITYSETNAME));
+        p.setRuleCallback(ODataParser.RuleNames.KEYPROPERTYVALUE.ruleID(), new CallbackBuilder(p, ODataParser.RuleNames.KEYPROPERTYVALUE));
+        p.setRuleCallback(ODataParser.RuleNames.RESOURCEPATH.ruleID(), new CallbackBuilder(p, ODataParser.RuleNames.RESOURCEPATH));
         
+        Result r = p.parse();
+
+        if( r.success() ) {
+            System.out.println("Success: " + RELATIVE_TOP);
+        } else if (!r.success() )
+        {
+            System.out.println(" fails at " + r.getMaxMatchedPhraseLength());
+            r.displayResult(System.out);
+            System.out.println("Trace **********************");
+
+
+            // parse again with trace enabled
+            Trace t = p.enableTrace(true);
+            t.setOut(System.out);
+
+            p.parse();
+            System.out.println();
+            System.out.flush();
+        }
+    }    
+    
+    @Test
+    public void testView() throws Exception {
+    	final String RELATIVE_TOP = "tools_xor_odor_Category(1)/Products?$top=201&view=BASICINFO&$orderby=name";
+    	
+        Parser p = new Parser(ODataParser.getInstance());
+        p.setStartRule(CallbackBuilder.ruleID(RELATIVE_URI));
+        p.setInputString(RELATIVE_TOP);
+        p.setMyData(new CallbackBuilder.Tracker());
+        p.setRuleCallback(ODataParser.RuleNames.TOP.ruleID(), new TopCallbackBuilder(p, ODataParser.RuleNames.TOP));
+        p.setRuleCallback(ODataParser.RuleNames.CUSTOMQUERYOPTION.ruleID(), new CustomCallbackBuilder(p, ODataParser.RuleNames.CUSTOMQUERYOPTION));        
+        p.setRuleCallback(ODataParser.RuleNames.ORDERBYITEM.ruleID(), new CallbackBuilder(p, ODataParser.RuleNames.ORDERBYITEM));
+        p.setRuleCallback(ODataParser.RuleNames.ENTITYSETNAME.ruleID(), new CallbackBuilder(p, ODataParser.RuleNames.ENTITYSETNAME));
+        p.setRuleCallback(ODataParser.RuleNames.KEYPROPERTYVALUE.ruleID(), new CallbackBuilder(p, ODataParser.RuleNames.KEYPROPERTYVALUE));
+        p.setRuleCallback(ODataParser.RuleNames.RESOURCEPATH.ruleID(), new CallbackBuilder(p, ODataParser.RuleNames.RESOURCEPATH));
+        
+        Result r = p.parse();
+
+        if( r.success() ) {
+            System.out.println("Success: " + RELATIVE_TOP);
+        } else if (!r.success() )
+        {
+            System.out.println(" fails at " + r.getMaxMatchedPhraseLength());
+            r.displayResult(System.out);
+            System.out.println("Trace **********************");
+
+
+            // parse again with trace enabled
+            Trace t = p.enableTrace(true);
+            t.setOut(System.out);
+
+            p.parse();
+            System.out.println();
+            System.out.flush();
+        }
+    }      
 }
