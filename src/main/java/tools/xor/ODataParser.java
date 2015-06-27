@@ -1,3 +1,5 @@
+package tools.xor;
+
 import apg.Grammar;
 import java.io.PrintStream;
 
