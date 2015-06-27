@@ -20,11 +20,12 @@ public class CallbackBuilder extends Parser.RuleCallback {
 		public void leave(CallbackBuilder builder, String fragment, String ruleName) {
 			System.out.println("Leave [" + ruleName + "] " + fragment);
 			CallbackBuilder b = builders.pop();
-			b.process(fragment);
+			CallbackBuilder parent = builders.empty() ? null : builders.peek();
+			b.process(fragment, parent);
 		}
 	}
 	
-	protected void process(String fragment) {
+	protected void process(String fragment, CallbackBuilder parent) {
 		
 	}
 	

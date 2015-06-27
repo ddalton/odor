@@ -20,7 +20,7 @@ public class SkiptokenCallbackBuilder extends CallbackBuilder {
 	}
 	
 	@Override
-	protected void process(String fragment) {
+	protected void process(String fragment, CallbackBuilder parent) {
 		if(fragment.contains("=")) {
 			String token = fragment.substring(fragment.indexOf('=')+1);
 			System.out.println("Skiptoken### " + token);
