@@ -19,6 +19,21 @@ public class OdorTest {
     public static final String FULL_URI = "odataUri";
     public static final String RELATIVE_URI = "odataRelativeUri";
 
+    private static void processFailure(Result r, Parser p) throws Exception {
+    	System.out.println(" fails at " + r.getMaxMatchedPhraseLength());
+    	r.displayResult(System.out);
+    	System.out.println("Trace **********************");
+
+
+    	// parse again with trace enabled
+    	Trace t = p.enableTrace(true);
+    	t.setOut(System.out);
+
+    	p.parse();
+    	System.out.println();
+    	System.out.flush();
+    }
+    
     /*
     public static class AST_callback extends Ast.AstCallback {
     	private String ruleName;
@@ -145,18 +160,7 @@ public class OdorTest {
             System.out.println("Success: " + RELATIVE_TOP);
         } else if (!r.success() )
         {
-            System.out.println(" fails at " + r.getMaxMatchedPhraseLength());
-            r.displayResult(System.out);
-            System.out.println("Trace **********************");
-
-
-            // parse again with trace enabled
-            Trace t = p.enableTrace(true);
-            t.setOut(System.out);
-
-            p.parse();
-            System.out.println();
-            System.out.flush();
+            processFailure(r, p);
         }
     }
     
@@ -181,18 +185,7 @@ public class OdorTest {
             System.out.println("Success: " + RELATIVE_TOP);
         } else if (!r.success() )
         {
-            System.out.println(" fails at " + r.getMaxMatchedPhraseLength());
-            r.displayResult(System.out);
-            System.out.println("Trace **********************");
-
-
-            // parse again with trace enabled
-            Trace t = p.enableTrace(true);
-            t.setOut(System.out);
-
-            p.parse();
-            System.out.println();
-            System.out.flush();
+            processFailure(r, p);
         }
     }
        
@@ -218,18 +211,7 @@ public class OdorTest {
             System.out.println("Success: " + RELATIVE_TOP);
         } else if (!r.success() )
         {
-            System.out.println(" fails at " + r.getMaxMatchedPhraseLength());
-            r.displayResult(System.out);
-            System.out.println("Trace **********************");
-
-
-            // parse again with trace enabled
-            Trace t = p.enableTrace(true);
-            t.setOut(System.out);
-
-            p.parse();
-            System.out.println();
-            System.out.flush();
+            processFailure(r, p);
         }
     }    
     
@@ -254,18 +236,7 @@ public class OdorTest {
             System.out.println("Success: " + RELATIVE_TOP);
         } else if (!r.success() )
         {
-            System.out.println(" fails at " + r.getMaxMatchedPhraseLength());
-            r.displayResult(System.out);
-            System.out.println("Trace **********************");
-
-
-            // parse again with trace enabled
-            Trace t = p.enableTrace(true);
-            t.setOut(System.out);
-
-            p.parse();
-            System.out.println();
-            System.out.flush();
+            processFailure(r, p);
         }
     }     
     
@@ -289,18 +260,7 @@ public class OdorTest {
             System.out.println("Success: " + RELATIVE_TOP);
         } else if (!r.success() )
         {
-            System.out.println(" fails at " + r.getMaxMatchedPhraseLength());
-            r.displayResult(System.out);
-            System.out.println("Trace **********************");
-
-
-            // parse again with trace enabled
-            Trace t = p.enableTrace(true);
-            t.setOut(System.out);
-
-            p.parse();
-            System.out.println();
-            System.out.flush();
+            processFailure(r, p);
         }
     }     
     
@@ -321,18 +281,28 @@ public class OdorTest {
             System.out.println("Success: " + RELATIVE_TOP);
         } else if (!r.success() )
         {
-            System.out.println(" fails at " + r.getMaxMatchedPhraseLength());
-            r.displayResult(System.out);
-            System.out.println("Trace **********************");
-
-
-            // parse again with trace enabled
-            Trace t = p.enableTrace(true);
-            t.setOut(System.out);
-
-            p.parse();
-            System.out.println();
-            System.out.flush();
+        	processFailure(r, p);
         }
     }      
+    
+    @Test
+    public void testSimpleSelect() throws Exception {
+    	final String ABSOLUTE_SELECT = "http://host/service/Products?$select=Rating,ReleaseDate";
+    	
+        Parser p = new Parser(ODataParser.getInstance());
+        p.setStartRule(CallbackBuilder.ruleID(FULL_URI));
+        p.setInputString(ABSOLUTE_SELECT);
+        p.setMyData(new CallbackBuilder.Tracker());
+        p.setRuleCallback(ODataParser.RuleNames.SELECT.ruleID(), new SelectCallbackBuilder(p, ODataParser.RuleNames.SELECT));
+        p.setRuleCallback(ODataParser.RuleNames.SELECTITEM.ruleID(), new SelectItemCallbackBuilder(p, ODataParser.RuleNames.SELECTITEM)); 
+        
+        Result r = p.parse();
+        
+        if( r.success() ) {
+            System.out.println("Success: " + ABSOLUTE_SELECT);
+        } else if (!r.success() )
+        {
+        	processFailure(r, p);
+        }
+    }
 }
